@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Termo de Falta e Avarias (TFA)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      padding: 30px 16px;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      overflow: hidden;
+    }
+
+    /* HEADER */
+    .header {
+      background: #1a3a5c;
+      color: #fff;
+      padding: 28px 36px 20px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .header-icon {
+      font-size: 40px;
+      line-height: 1;
+    }
+    .header-text h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .header-text p {
+      font-size: 13px;
+      opacity: 0.75;
+      margin-top: 3px;
+    }
+
+    /* AUTO DATE/TIME BADGE */
+    .datetime-bar {
+      background: #e8f0fe;
+      border-bottom: 1px solid #c5d8f7;
+      padding: 10px 36px;
+      display: flex;
+      gap: 32px;
+    }
+    .datetime-bar .dt-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #1a3a5c;
+      font-weight: 600;
+    }
+    .datetime-bar .dt-item span.label {
+      font-weight: 400;
+      color: #555;
+    }
+
+    /* FORM BODY */
+    .form-body {
+      padding: 32px 36px;
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: #1a3a5c;
+      border-bottom: 2px solid #1a3a5c;
+      padding-bottom: 6px;
+      margin-bottom: 20px;
+      margin-top: 28px;
+    }
+    .section-title:first-child { margin-top: 0; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 18px;
+    }
+    .full-width { grid-column: 1 / -1; }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .field label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #444;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .field input,
+    .field select,
+    .field textarea {
+      border: 1.5px solid #d1d9e0;
+      border-radius: 7px;
+      padding: 10px 13px;
+      font-size: 15px;
+      color: #222;
+      background: #fafbfc;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%;
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: #1a3a5c;
+      box-shadow: 0 0 0 3px rgba(26,58,92,0.10);
+      background: #fff;
+    }
+    .field textarea {
+      min-height: 100px;
+      resize: vertical;
+      font-family: inherit;
+    }
+    .field select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231a3a5c' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+
+    /* FOTOS */
+    .upload-area {
+      border: 2px dashed #b0c4de;
+      border-radius: 10px;
+      background: #f4f7fb;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+    }
+    .upload-area:hover {
+      border-color: #1a3a5c;
+      background: #e8f0fe;
+    }
+    .upload-area input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+    .upload-area .upload-icon { font-size: 32px; margin-bottom: 8px; }
+    .upload-area p { font-size: 14px; color: #555; }
+    .upload-area p strong { color: #1a3a5c; }
+
+    #photo-preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    #photo-preview .thumb {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid #d1d9e0;
+      background: #eee;
+    }
+    #photo-preview .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #photo-preview .thumb .remove-btn {
+      position: absolute;
+      top: 3px; right: 3px;
+      background: rgba(180,0,0,0.75);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 20px; height: 20px;
+      font-size: 13px;
+      line-height: 20px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: bold;
+      display: none;
+    }
+    #photo-preview .thumb:hover .remove-btn { display: block; }
+
+    /* ACTIONS */
+    .actions {
+      display: flex;
+      gap: 14px;
+      margin-top: 36px;
+      padding-top: 24px;
+      border-top: 1px solid #e5e9f0;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: background 0.18s, transform 0.1s;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary {
+      background: #1a3a5c;
+      color: #fff;
+    }
+    .btn-primary:hover { background: #14304f; }
+    .btn-secondary {
+      background: #e8f0fe;
+      color: #1a3a5c;
+    }
+    .btn-secondary:hover { background: #d0e2fb; }
+    .btn-danger {
+      background: #fde8e8;
+      color: #c0392b;
+      margin-left: auto;
+    }
+    .btn-danger:hover { background: #fbd0d0; }
+
+    /* PRINT STYLES */
+    @media print {
+      body { background: #fff; padding: 0; }
+      .container { box-shadow: none; border-radius: 0; }
+      .actions { display: none; }
+      .upload-area input[type="file"] { display: none; }
+      .thumb .remove-btn { display: none !important; }
+      .datetime-bar { background: #f0f4fb; }
+    }
+
+    /* TOAST */
+    #toast {
+      position: fixed;
+      bottom: 30px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1a3a5c;
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 30px;
+      font-size: 15px;
+      font-weight: 600;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      z-index: 999;
+    }
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-icon">📋</div>
+    <div class="header-text">
+      <h1>TERMO DE FALTA E AVARIAS</h1>
+      <p>Registro de ocorrências — TFA</p>
+    </div>
+  </div>
+
+  <!-- AUTO DATE/TIME -->
+  <div class="datetime-bar">
+    <div class="dt-item">
+      📅 <span class="label">Data:</span>
+      <span id="auto-date">—</span>
+    </div>
+    <div class="dt-item">
+      🕐 <span class="label">Hora:</span>
+      <span id="auto-time">—</span>
+    </div>
+  </div>
+
+  <!-- FORM -->
+  <div class="form-body">
+
+    <!-- IDENTIFICAÇÃO -->
+    <div class="section-title">Identificação</div>
+    <div class="grid-2">
+
+      <div class="field">
+        <label>Conferente</label>
+        <select id="conferente" required>
+          <option value="">— Selecione —</option>
+          <option>ABNER</option>
+          <option>J. GABRIEL</option>
+          <option>PANTCHA</option>
+          <option>J. AGUINALDO</option>
+          <option>GUILHERME</option>
+          <option>EMANUEL</option>
+          <option>LUIZ</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Cliente</label>
+        <input type="text" id="cliente" placeholder="Nome do cliente" />
+      </div>
+
+    </div>
+
+    <!-- DOCUMENTOS -->
+    <div class="section-title">Documentos</div>
+    <div class="grid-3">
+
+      <div class="field">
+        <label>NF</label>
+        <input type="text" id="nf" placeholder="Nº da Nota Fiscal" />
+      </div>
+
+      <div class="field">
+        <label>DI</label>
+        <input type="text" id="di" placeholder="Nº da DI" />
+      </div>
+
+      <div class="field">
+        <label>DEC</label>
+        <input type="text" id="dec" placeholder="Nº da DEC" />
+      </div>
+
+    </div>
+
+    <!-- TRANSPORTE -->
+    <div class="section-title">Transporte</div>
+    <div class="grid-3">
+
+      <div class="field">
+        <label>Motorista</label>
+        <input type="text" id="motorista" placeholder="Nome do motorista" />
+      </div>
+
+      <div class="field">
+        <label>Veículo</label>
+        <input type="text" id="veiculo" placeholder="Placa / identificação" />
+      </div>
+
+      <div class="field">
+        <label>Qtd. Volumes</label>
+        <input type="number" id="qtd-vol" placeholder="0" min="0" />
+      </div>
+
+    </div>
+
+    <!-- AVARIA -->
+    <div class="section-title">Descrição da Avaria</div>
+    <div class="field">
+      <label>Descrição detalhada</label>
+      <textarea id="descricao" placeholder="Descreva a falta ou avaria identificada..."></textarea>
+    </div>
+
+    <!-- FOTOS -->
+    <div class="section-title">Fotos</div>
+    <div class="upload-area" id="upload-area">
+      <input type="file" id="foto-input" accept="image/*" multiple />
+      <div class="upload-icon">📷</div>
+      <p><strong>Clique para selecionar fotos</strong> ou arraste aqui</p>
+      <p style="font-size:12px; margin-top:4px; color:#888;">JPG, PNG, WEBP — múltiplos arquivos aceitos</p>
+    </div>
+    <div id="photo-preview"></div>
+
+    <!-- ACTIONS -->
+    <div class="actions">
+      <button class="btn btn-primary" onclick="printForm()">🖨️ Imprimir / Salvar PDF</button>
+      <button class="btn btn-secondary" onclick="clearForm()">🔄 Nova Ocorrência</button>
+    </div>
+
+  </div><!-- /form-body -->
+</div><!-- /container -->
+
+<div id="toast"></div>
+
+<script>
+  // ─── AUTO DATE & TIME ───────────────────────────────────────
+  function pad(n){ return String(n).padStart(2,'0'); }
+
+  function updateDateTime() {
+    const now = new Date();
+    const d = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()}`;
+    const t = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    document.getElementById('auto-date').textContent = d;
+    document.getElementById('auto-time').textContent = t;
+  }
+  updateDateTime();
+  setInterval(updateDateTime, 1000);
+
+  // ─── FOTO PREVIEW ────────────────────────────────────────────
+  let selectedFiles = [];
+
+  document.getElementById('foto-input').addEventListener('change', function(e) {
+    const files = Array.from(e.target.files);
+    files.forEach(file => {
+      if (!file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        const id = Date.now() + Math.random();
+        selectedFiles.push({ id, file, src: ev.target.result });
+        renderThumbs();
+      };
+      reader.readAsDataURL(file);
+    });
+    // Reset input so same file can be re-added
+    e.target.value = '';
+  });
+
+  function renderThumbs() {
+    const preview = document.getElementById('photo-preview');
+    preview.innerHTML = '';
+    selectedFiles.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'thumb';
+      div.innerHTML = `
+        <img src="${item.src}" alt="foto" />
+        <button class="remove-btn" onclick="removePhoto('${item.id}')">✕</button>
+      `;
+      preview.appendChild(div);
+    });
+  }
+
+  function removePhoto(id) {
+    selectedFiles = selectedFiles.filter(f => String(f.id) !== String(id));
+    renderThumbs();
+  }
+
+  // ─── DRAG & DROP ─────────────────────────────────────────────
+  const uploadArea = document.getElementById('upload-area');
+  uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.style.borderColor='#1a3a5c'; });
+  uploadArea.addEventListener('dragleave', () => { uploadArea.style.borderColor=''; });
+  uploadArea.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadArea.style.borderColor='';
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const id = Date.now() + Math.random();
+        selectedFiles.push({ id, file, src: ev.target.result });
+        renderThumbs();
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+
+  // ─── PRINT ───────────────────────────────────────────────────
+  function printForm() {
+    window.print();
+  }
+
+  // ─── CLEAR ───────────────────────────────────────────────────
+  function clearForm() {
+    ['conferente','cliente','nf','di','dec','motorista','veiculo','qtd-vol','descricao'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el.tagName === 'SELECT') el.selectedIndex = 0;
+      else el.value = '';
+    });
+    selectedFiles = [];
+    renderThumbs();
+    showToast('✅ Formulário limpo — pronto para nova ocorrência');
+  }
+
+  // ─── TOAST ───────────────────────────────────────────────────
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+</script>
+
+</body>
+</html>
