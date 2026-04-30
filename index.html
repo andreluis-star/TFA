@@ -1,318 +1,193 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Termo de Falta e Avarias (TFA)</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; min-height: 100vh; padding: 30px 16px; }
 
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: #f0f2f5;
-      min-height: 100vh;
-      padding: 30px 16px;
-    }
+    .container { max-width: 900px; margin: 0 auto; }
 
-    .container {
-      max-width: 860px;
-      margin: 0 auto;
+    /* CARD */
+    .card {
       background: #fff;
       border-radius: 12px;
       box-shadow: 0 4px 24px rgba(0,0,0,0.10);
       overflow: hidden;
+      margin-bottom: 28px;
     }
 
     /* HEADER */
     .header {
       background: #1a3a5c;
       color: #fff;
-      padding: 28px 36px 20px;
+      padding: 24px 32px;
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 16px;
     }
-    .header-icon {
-      font-size: 40px;
-      line-height: 1;
-    }
-    .header-text h1 {
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
-    .header-text p {
-      font-size: 13px;
-      opacity: 0.75;
-      margin-top: 3px;
-    }
+    .header-icon { font-size: 36px; }
+    .header-text h1 { font-size: 20px; font-weight: 700; letter-spacing: 0.4px; }
+    .header-text p { font-size: 12px; opacity: 0.7; margin-top: 2px; }
 
-    /* AUTO DATE/TIME BADGE */
+    /* DATE BAR */
     .datetime-bar {
       background: #e8f0fe;
       border-bottom: 1px solid #c5d8f7;
-      padding: 10px 36px;
+      padding: 9px 32px;
       display: flex;
-      gap: 32px;
+      gap: 28px;
     }
-    .datetime-bar .dt-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-      color: #1a3a5c;
-      font-weight: 600;
-    }
-    .datetime-bar .dt-item span.label {
-      font-weight: 400;
-      color: #555;
-    }
+    .dt-item { display: flex; align-items: center; gap: 7px; font-size: 13px; color: #1a3a5c; font-weight: 600; }
+    .dt-item .lbl { font-weight: 400; color: #555; }
 
-    /* FORM BODY */
-    .form-body {
-      padding: 32px 36px;
-    }
+    /* FORM */
+    .form-body { padding: 28px 32px; }
 
     .section-title {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-      color: #1a3a5c;
+      font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.2px; color: #1a3a5c;
       border-bottom: 2px solid #1a3a5c;
-      padding-bottom: 6px;
-      margin-bottom: 20px;
-      margin-top: 28px;
+      padding-bottom: 5px; margin-bottom: 16px; margin-top: 24px;
     }
     .section-title:first-child { margin-top: 0; }
 
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-    }
-    .grid-3 {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 18px;
-    }
-    .full-width { grid-column: 1 / -1; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
 
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { font-size: 11px; font-weight: 700; color: #444; text-transform: uppercase; letter-spacing: 0.4px; }
+    .field input, .field select, .field textarea {
+      border: 1.5px solid #d1d9e0; border-radius: 7px;
+      padding: 9px 12px; font-size: 14px; color: #222;
+      background: #fafbfc; transition: border-color 0.2s, box-shadow 0.2s; width: 100%;
     }
-    .field label {
-      font-size: 12px;
-      font-weight: 700;
-      color: #444;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+    .field input:focus, .field select:focus, .field textarea:focus {
+      outline: none; border-color: #1a3a5c;
+      box-shadow: 0 0 0 3px rgba(26,58,92,0.10); background: #fff;
     }
-    .field input,
-    .field select,
-    .field textarea {
-      border: 1.5px solid #d1d9e0;
-      border-radius: 7px;
-      padding: 10px 13px;
-      font-size: 15px;
-      color: #222;
-      background: #fafbfc;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      width: 100%;
-    }
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus {
-      outline: none;
-      border-color: #1a3a5c;
-      box-shadow: 0 0 0 3px rgba(26,58,92,0.10);
-      background: #fff;
-    }
-    .field textarea {
-      min-height: 100px;
-      resize: vertical;
-      font-family: inherit;
-    }
+    .field textarea { min-height: 85px; resize: vertical; font-family: inherit; }
     .field select {
       appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231a3a5c' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      padding-right: 36px;
-      cursor: pointer;
+      background-repeat: no-repeat; background-position: right 11px center; padding-right: 34px; cursor: pointer;
     }
 
     /* FOTOS */
     .upload-area {
-      border: 2px dashed #b0c4de;
-      border-radius: 10px;
-      background: #f4f7fb;
-      padding: 24px;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-      position: relative;
+      border: 2px dashed #b0c4de; border-radius: 10px;
+      background: #f4f7fb; padding: 20px; text-align: center;
+      cursor: pointer; transition: border-color 0.2s, background 0.2s; position: relative;
     }
-    .upload-area:hover {
-      border-color: #1a3a5c;
-      background: #e8f0fe;
-    }
-    .upload-area input[type="file"] {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
-      width: 100%;
-      height: 100%;
-    }
-    .upload-area .upload-icon { font-size: 32px; margin-bottom: 8px; }
-    .upload-area p { font-size: 14px; color: #555; }
+    .upload-area:hover { border-color: #1a3a5c; background: #e8f0fe; }
+    .upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .upload-area .ui { font-size: 28px; margin-bottom: 6px; }
+    .upload-area p { font-size: 13px; color: #555; }
     .upload-area p strong { color: #1a3a5c; }
 
-    #photo-preview {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 16px;
-    }
-    #photo-preview .thumb {
-      position: relative;
-      width: 100px;
-      height: 100px;
-      border-radius: 8px;
-      overflow: hidden;
-      border: 2px solid #d1d9e0;
-      background: #eee;
-    }
-    #photo-preview .thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    #photo-preview .thumb .remove-btn {
-      position: absolute;
-      top: 3px; right: 3px;
-      background: rgba(180,0,0,0.75);
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      width: 20px; height: 20px;
-      font-size: 13px;
-      line-height: 20px;
-      text-align: center;
-      cursor: pointer;
-      font-weight: bold;
-      display: none;
-    }
-    #photo-preview .thumb:hover .remove-btn { display: block; }
+    #photo-preview { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+    .thumb { position: relative; width: 90px; height: 90px; border-radius: 7px; overflow: hidden; border: 2px solid #d1d9e0; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .thumb .rm { position: absolute; top: 2px; right: 2px; background: rgba(180,0,0,0.78); color:#fff; border:none; border-radius:50%; width:18px; height:18px; font-size:11px; line-height:18px; text-align:center; cursor:pointer; font-weight:bold; display:none; }
+    .thumb:hover .rm { display: block; }
 
-    /* ACTIONS */
-    .actions {
-      display: flex;
-      gap: 14px;
-      margin-top: 36px;
-      padding-top: 24px;
-      border-top: 1px solid #e5e9f0;
+    /* ACTIONS (form) */
+    .form-actions {
+      display: flex; gap: 12px; margin-top: 28px;
+      padding-top: 20px; border-top: 1px solid #e5e9f0;
+      flex-wrap: wrap;
     }
     .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 28px;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      border: none;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 11px 22px; border-radius: 8px; font-size: 14px;
+      font-weight: 700; cursor: pointer; border: none;
       transition: background 0.18s, transform 0.1s;
     }
     .btn:active { transform: scale(0.97); }
-    .btn-primary {
-      background: #1a3a5c;
-      color: #fff;
-    }
+    .btn-primary { background: #1a3a5c; color: #fff; }
     .btn-primary:hover { background: #14304f; }
-    .btn-secondary {
-      background: #e8f0fe;
-      color: #1a3a5c;
-    }
+    .btn-secondary { background: #e8f0fe; color: #1a3a5c; }
     .btn-secondary:hover { background: #d0e2fb; }
-    .btn-danger {
-      background: #fde8e8;
-      color: #c0392b;
-      margin-left: auto;
-    }
-    .btn-danger:hover { background: #fbd0d0; }
+    .btn-success { background: #1e7e34; color: #fff; }
+    .btn-success:hover { background: #196b2c; }
+    .btn-danger-soft { background: #fde8e8; color: #c0392b; }
+    .btn-danger-soft:hover { background: #fbd0d0; }
 
-    /* PRINT STYLES */
-    @media print {
-      body { background: #fff; padding: 0; }
-      .container { box-shadow: none; border-radius: 0; }
-      .actions { display: none; }
-      .upload-area input[type="file"] { display: none; }
-      .thumb .remove-btn { display: none !important; }
-      .datetime-bar { background: #f0f4fb; }
+    /* RECORDS TABLE */
+    .records-header {
+      background: #1a3a5c; color: #fff;
+      padding: 16px 32px;
+      display: flex; align-items: center; justify-content: space-between;
     }
+    .records-header h2 { font-size: 15px; font-weight: 700; }
+    .badge {
+      background: #e8f0fe; color: #1a3a5c;
+      border-radius: 20px; padding: 3px 12px; font-size: 13px; font-weight: 700;
+    }
+    .records-body { padding: 20px 32px; }
+    .records-actions { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead tr { background: #f0f4fa; }
+    th { padding: 9px 10px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #1a3a5c; white-space: nowrap; border-bottom: 2px solid #d1d9e0; }
+    td { padding: 9px 10px; border-bottom: 1px solid #edf0f5; vertical-align: middle; color: #333; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f7f9fd; }
+    .td-del { text-align: center; }
+    .del-btn { background: none; border: none; cursor: pointer; font-size: 16px; opacity: 0.5; transition: opacity 0.2s; }
+    .del-btn:hover { opacity: 1; }
+    .empty-msg { text-align: center; color: #aaa; padding: 32px 0; font-size: 14px; }
 
     /* TOAST */
     #toast {
-      position: fixed;
-      bottom: 30px; left: 50%;
+      position: fixed; bottom: 28px; left: 50%;
       transform: translateX(-50%) translateY(80px);
-      background: #1a3a5c;
-      color: #fff;
-      padding: 12px 28px;
-      border-radius: 30px;
-      font-size: 15px;
-      font-weight: 600;
+      background: #1a3a5c; color: #fff;
+      padding: 11px 26px; border-radius: 28px;
+      font-size: 14px; font-weight: 600;
       box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-      opacity: 0;
-      transition: opacity 0.3s, transform 0.3s;
-      z-index: 999;
+      opacity: 0; transition: opacity 0.3s, transform 0.3s; z-index: 999;
     }
-    #toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 600px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .form-body, .records-body { padding: 20px 16px; }
+      .header, .records-header { padding: 18px 16px; }
+      .datetime-bar { padding: 9px 16px; flex-wrap: wrap; gap: 10px; }
     }
   </style>
 </head>
 <body>
 
+<!-- ═══ FORMULÁRIO ═══ -->
 <div class="container">
+<div class="card">
 
-  <!-- HEADER -->
   <div class="header">
     <div class="header-icon">📋</div>
     <div class="header-text">
-      <h1>TERMO DE FALTA E AVARIAS</h1>
-      <p>Registro de ocorrências — TFA</p>
+      <h1>TERMO DE FALTA E AVARIAS — TFA</h1>
+      <p>Registro de ocorrências</p>
     </div>
   </div>
 
-  <!-- AUTO DATE/TIME -->
   <div class="datetime-bar">
-    <div class="dt-item">
-      📅 <span class="label">Data:</span>
-      <span id="auto-date">—</span>
-    </div>
-    <div class="dt-item">
-      🕐 <span class="label">Hora:</span>
-      <span id="auto-time">—</span>
-    </div>
+    <div class="dt-item">📅 <span class="lbl">Data:</span> <span id="auto-date">—</span></div>
+    <div class="dt-item">🕐 <span class="lbl">Hora:</span> <span id="auto-time">—</span></div>
   </div>
 
-  <!-- FORM -->
   <div class="form-body">
 
-    <!-- IDENTIFICAÇÃO -->
     <div class="section-title">Identificação</div>
     <div class="grid-2">
-
       <div class="field">
         <label>Conferente</label>
-        <select id="conferente" required>
+        <select id="conferente">
           <option value="">— Selecione —</option>
           <option>ABNER</option>
           <option>J. GABRIEL</option>
@@ -323,180 +198,263 @@
           <option>LUIZ</option>
         </select>
       </div>
-
       <div class="field">
         <label>Cliente</label>
-        <input type="text" id="cliente" placeholder="Nome do cliente" />
+        <input type="text" id="cliente" placeholder="Nome do cliente"/>
       </div>
-
     </div>
 
-    <!-- DOCUMENTOS -->
     <div class="section-title">Documentos</div>
     <div class="grid-3">
-
-      <div class="field">
-        <label>NF</label>
-        <input type="text" id="nf" placeholder="Nº da Nota Fiscal" />
-      </div>
-
-      <div class="field">
-        <label>DI</label>
-        <input type="text" id="di" placeholder="Nº da DI" />
-      </div>
-
-      <div class="field">
-        <label>DEC</label>
-        <input type="text" id="dec" placeholder="Nº da DEC" />
-      </div>
-
+      <div class="field"><label>NF</label><input type="text" id="nf" placeholder="Nº da Nota Fiscal"/></div>
+      <div class="field"><label>DI</label><input type="text" id="di" placeholder="Nº da DI"/></div>
+      <div class="field"><label>DEC</label><input type="text" id="dec" placeholder="Nº da DEC"/></div>
     </div>
 
-    <!-- TRANSPORTE -->
     <div class="section-title">Transporte</div>
     <div class="grid-3">
-
-      <div class="field">
-        <label>Motorista</label>
-        <input type="text" id="motorista" placeholder="Nome do motorista" />
-      </div>
-
-      <div class="field">
-        <label>Veículo</label>
-        <input type="text" id="veiculo" placeholder="Placa / identificação" />
-      </div>
-
-      <div class="field">
-        <label>Qtd. Volumes</label>
-        <input type="number" id="qtd-vol" placeholder="0" min="0" />
-      </div>
-
+      <div class="field"><label>Motorista</label><input type="text" id="motorista" placeholder="Nome do motorista"/></div>
+      <div class="field"><label>Veículo</label><input type="text" id="veiculo" placeholder="Placa / identificação"/></div>
+      <div class="field"><label>Qtd. Volumes</label><input type="number" id="qtd-vol" placeholder="0" min="0"/></div>
     </div>
 
-    <!-- AVARIA -->
     <div class="section-title">Descrição da Avaria</div>
     <div class="field">
       <label>Descrição detalhada</label>
       <textarea id="descricao" placeholder="Descreva a falta ou avaria identificada..."></textarea>
     </div>
 
-    <!-- FOTOS -->
     <div class="section-title">Fotos</div>
     <div class="upload-area" id="upload-area">
-      <input type="file" id="foto-input" accept="image/*" multiple />
-      <div class="upload-icon">📷</div>
+      <input type="file" id="foto-input" accept="image/*" multiple/>
+      <div class="ui">📷</div>
       <p><strong>Clique para selecionar fotos</strong> ou arraste aqui</p>
-      <p style="font-size:12px; margin-top:4px; color:#888;">JPG, PNG, WEBP — múltiplos arquivos aceitos</p>
+      <p style="font-size:12px;margin-top:3px;color:#888;">JPG, PNG, WEBP — múltiplos arquivos aceitos</p>
     </div>
     <div id="photo-preview"></div>
 
-    <!-- ACTIONS -->
-    <div class="actions">
-      <button class="btn btn-primary" onclick="printForm()">🖨️ Imprimir / Salvar PDF</button>
-      <button class="btn btn-secondary" onclick="clearForm()">🔄 Nova Ocorrência</button>
+    <div class="form-actions">
+      <button class="btn btn-primary" onclick="saveRecord()">💾 Registrar Ocorrência</button>
+      <button class="btn btn-secondary" onclick="clearForm()">🔄 Limpar Campos</button>
     </div>
 
-  </div><!-- /form-body -->
-</div><!-- /container -->
+  </div>
+</div>
+
+<!-- ═══ REGISTROS ═══ -->
+<div class="card">
+  <div class="records-header">
+    <h2>📂 Ocorrências Registradas</h2>
+    <span class="badge" id="total-badge">0 registros</span>
+  </div>
+  <div class="records-body">
+    <div class="records-actions">
+      <button class="btn btn-success" onclick="exportExcel()">📊 Exportar para Excel</button>
+      <button class="btn btn-danger-soft" onclick="clearAll()">🗑️ Apagar Todos</button>
+    </div>
+    <div class="table-wrap">
+      <table id="records-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Data</th>
+            <th>Hora</th>
+            <th>Conferente</th>
+            <th>Cliente</th>
+            <th>NF</th>
+            <th>DI</th>
+            <th>DEC</th>
+            <th>Motorista</th>
+            <th>Veículo</th>
+            <th>Qtd Vol</th>
+            <th>Descrição</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="records-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</div>
 
 <div id="toast"></div>
 
 <script>
-  // ─── AUTO DATE & TIME ───────────────────────────────────────
-  function pad(n){ return String(n).padStart(2,'0'); }
+// ─── DATE / TIME ─────────────────────────────────────────────
+function pad(n){ return String(n).padStart(2,'0'); }
+function getNow() {
+  const now = new Date();
+  return {
+    date: `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()}`,
+    time: `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
+  };
+}
+function tick() {
+  const {date, time} = getNow();
+  document.getElementById('auto-date').textContent = date;
+  document.getElementById('auto-time').textContent = time;
+}
+tick(); setInterval(tick, 1000);
 
-  function updateDateTime() {
-    const now = new Date();
-    const d = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()}`;
-    const t = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-    document.getElementById('auto-date').textContent = d;
-    document.getElementById('auto-time').textContent = t;
-  }
-  updateDateTime();
-  setInterval(updateDateTime, 1000);
-
-  // ─── FOTO PREVIEW ────────────────────────────────────────────
-  let selectedFiles = [];
-
-  document.getElementById('foto-input').addEventListener('change', function(e) {
-    const files = Array.from(e.target.files);
-    files.forEach(file => {
-      if (!file.type.startsWith('image/')) return;
-      const reader = new FileReader();
-      reader.onload = function(ev) {
-        const id = Date.now() + Math.random();
-        selectedFiles.push({ id, file, src: ev.target.result });
-        renderThumbs();
-      };
-      reader.readAsDataURL(file);
-    });
-    // Reset input so same file can be re-added
-    e.target.value = '';
+// ─── FOTOS ───────────────────────────────────────────────────
+let selectedFiles = [];
+document.getElementById('foto-input').addEventListener('change', function(e){
+  handleFiles(Array.from(e.target.files));
+  e.target.value = '';
+});
+const uploadArea = document.getElementById('upload-area');
+uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.style.borderColor='#1a3a5c'; });
+uploadArea.addEventListener('dragleave', () => { uploadArea.style.borderColor=''; });
+uploadArea.addEventListener('drop', e => {
+  e.preventDefault(); uploadArea.style.borderColor='';
+  handleFiles(Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')));
+});
+function handleFiles(files) {
+  files.forEach(file => {
+    if (!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = ev => { selectedFiles.push({id: Date.now()+Math.random(), src: ev.target.result}); renderThumbs(); };
+    reader.readAsDataURL(file);
   });
-
-  function renderThumbs() {
-    const preview = document.getElementById('photo-preview');
-    preview.innerHTML = '';
-    selectedFiles.forEach(item => {
-      const div = document.createElement('div');
-      div.className = 'thumb';
-      div.innerHTML = `
-        <img src="${item.src}" alt="foto" />
-        <button class="remove-btn" onclick="removePhoto('${item.id}')">✕</button>
-      `;
-      preview.appendChild(div);
-    });
-  }
-
-  function removePhoto(id) {
-    selectedFiles = selectedFiles.filter(f => String(f.id) !== String(id));
-    renderThumbs();
-  }
-
-  // ─── DRAG & DROP ─────────────────────────────────────────────
-  const uploadArea = document.getElementById('upload-area');
-  uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.style.borderColor='#1a3a5c'; });
-  uploadArea.addEventListener('dragleave', () => { uploadArea.style.borderColor=''; });
-  uploadArea.addEventListener('drop', e => {
-    e.preventDefault();
-    uploadArea.style.borderColor='';
-    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = ev => {
-        const id = Date.now() + Math.random();
-        selectedFiles.push({ id, file, src: ev.target.result });
-        renderThumbs();
-      };
-      reader.readAsDataURL(file);
-    });
+}
+function renderThumbs() {
+  const p = document.getElementById('photo-preview');
+  p.innerHTML = '';
+  selectedFiles.forEach(item => {
+    const d = document.createElement('div'); d.className='thumb';
+    d.innerHTML = `<img src="${item.src}"/><button class="rm" onclick="removePhoto('${item.id}')">✕</button>`;
+    p.appendChild(d);
   });
+}
+function removePhoto(id) {
+  selectedFiles = selectedFiles.filter(f=>String(f.id)!==String(id)); renderThumbs();
+}
 
-  // ─── PRINT ───────────────────────────────────────────────────
-  function printForm() {
-    window.print();
-  }
+// ─── STORAGE ─────────────────────────────────────────────────
+function loadRecords() {
+  try { return JSON.parse(localStorage.getItem('tfa_records') || '[]'); } catch(e){ return []; }
+}
+function saveRecords(recs) {
+  localStorage.setItem('tfa_records', JSON.stringify(recs));
+}
 
-  // ─── CLEAR ───────────────────────────────────────────────────
-  function clearForm() {
-    ['conferente','cliente','nf','di','dec','motorista','veiculo','qtd-vol','descricao'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el.tagName === 'SELECT') el.selectedIndex = 0;
-      else el.value = '';
-    });
-    selectedFiles = [];
-    renderThumbs();
-    showToast('✅ Formulário limpo — pronto para nova ocorrência');
-  }
+// ─── SAVE ────────────────────────────────────────────────────
+function saveRecord() {
+  const {date, time} = getNow();
+  const rec = {
+    id: Date.now(),
+    date,
+    time,
+    conferente: document.getElementById('conferente').value,
+    cliente:    document.getElementById('cliente').value.trim(),
+    nf:         document.getElementById('nf').value.trim(),
+    di:         document.getElementById('di').value.trim(),
+    dec:        document.getElementById('dec').value.trim(),
+    motorista:  document.getElementById('motorista').value.trim(),
+    veiculo:    document.getElementById('veiculo').value.trim(),
+    qtdVol:     document.getElementById('qtd-vol').value.trim(),
+    descricao:  document.getElementById('descricao').value.trim(),
+    fotos:      selectedFiles.length
+  };
+  if (!rec.conferente) { showToast('⚠️ Selecione o conferente antes de registrar.'); return; }
+  if (!rec.cliente)    { showToast('⚠️ Preencha o campo Cliente.'); return; }
 
-  // ─── TOAST ───────────────────────────────────────────────────
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2800);
+  const recs = loadRecords();
+  recs.push(rec);
+  saveRecords(recs);
+  renderTable();
+  clearForm();
+  showToast('✅ Ocorrência registrada com sucesso!');
+}
+
+// ─── TABLE ───────────────────────────────────────────────────
+function renderTable() {
+  const recs = loadRecords();
+  const tbody = document.getElementById('records-body');
+  document.getElementById('total-badge').textContent = `${recs.length} registro${recs.length!==1?'s':''}`;
+  if (recs.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="13" class="empty-msg">Nenhuma ocorrência registrada ainda.</td></tr>`;
+    return;
   }
+  tbody.innerHTML = recs.map((r, i) => `
+    <tr>
+      <td><strong>${i+1}</strong></td>
+      <td>${r.date}</td>
+      <td>${r.time}</td>
+      <td>${r.conferente}</td>
+      <td>${r.cliente}</td>
+      <td>${r.nf||'—'}</td>
+      <td>${r.di||'—'}</td>
+      <td>${r.dec||'—'}</td>
+      <td>${r.motorista||'—'}</td>
+      <td>${r.veiculo||'—'}</td>
+      <td>${r.qtdVol||'—'}</td>
+      <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${r.descricao}">${r.descricao||'—'}</td>
+      <td class="td-del"><button class="del-btn" onclick="deleteRecord(${r.id})" title="Excluir">🗑️</button></td>
+    </tr>`).join('');
+}
+
+function deleteRecord(id) {
+  if (!confirm('Excluir esta ocorrência?')) return;
+  const recs = loadRecords().filter(r => r.id !== id);
+  saveRecords(recs); renderTable();
+  showToast('🗑️ Ocorrência excluída.');
+}
+
+function clearAll() {
+  if (!confirm('Apagar TODOS os registros? Esta ação não pode ser desfeita.')) return;
+  saveRecords([]); renderTable();
+  showToast('🗑️ Todos os registros foram apagados.');
+}
+
+// ─── EXPORT EXCEL ────────────────────────────────────────────
+function exportExcel() {
+  const recs = loadRecords();
+  if (recs.length === 0) { showToast('⚠️ Nenhum registro para exportar.'); return; }
+
+  const headers = ['#','Data','Hora','Conferente','Cliente','NF','DI','DEC','Motorista','Veículo','Qtd Volumes','Descrição da Avaria','Fotos (qtd)'];
+  const rows = recs.map((r, i) => [
+    i+1, r.date, r.time, r.conferente, r.cliente,
+    r.nf||'', r.di||'', r.dec||'', r.motorista||'', r.veiculo||'',
+    r.qtdVol||'', r.descricao||'', r.fotos||0
+  ]);
+
+  const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+
+  // Column widths
+  ws['!cols'] = [
+    {wch:4},{wch:12},{wch:10},{wch:14},{wch:20},
+    {wch:14},{wch:14},{wch:14},{wch:16},{wch:14},
+    {wch:10},{wch:36},{wch:10}
+  ];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'TFA');
+
+  const today = getNow().date.replace(/\//g,'-');
+  XLSX.writeFile(wb, `TFA_${today}.xlsx`);
+  showToast('📊 Excel exportado com sucesso!');
+}
+
+// ─── CLEAR FORM ──────────────────────────────────────────────
+function clearForm() {
+  ['conferente','cliente','nf','di','dec','motorista','veiculo','qtd-vol','descricao'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el.tagName === 'SELECT') el.selectedIndex = 0; else el.value = '';
+  });
+  selectedFiles = []; renderThumbs();
+}
+
+// ─── TOAST ───────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ─── INIT ────────────────────────────────────────────────────
+renderTable();
 </script>
-
 </body>
 </html>
