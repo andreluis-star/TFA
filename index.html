@@ -8,128 +8,60 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; min-height: 100vh; padding: 30px 16px; }
-
     .container { max-width: 900px; margin: 0 auto; }
-
-    /* CARD */
-    .card {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-      overflow: hidden;
-      margin-bottom: 28px;
-    }
-
-    /* HEADER */
-    .header {
-      background: #1a3a5c;
-      color: #fff;
-      padding: 24px 32px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
+    .card { background: #fff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.10); overflow: hidden; margin-bottom: 28px; }
+    .header { background: #1a3a5c; color: #fff; padding: 24px 32px; display: flex; align-items: center; gap: 16px; }
     .header-icon { font-size: 36px; }
     .header-text h1 { font-size: 20px; font-weight: 700; letter-spacing: 0.4px; }
     .header-text p { font-size: 12px; opacity: 0.7; margin-top: 2px; }
-
-    /* DATE BAR */
-    .datetime-bar {
-      background: #e8f0fe;
-      border-bottom: 1px solid #c5d8f7;
-      padding: 9px 32px;
-      display: flex;
-      gap: 28px;
-    }
+    .datetime-bar { background: #e8f0fe; border-bottom: 1px solid #c5d8f7; padding: 9px 32px; display: flex; gap: 28px; }
     .dt-item { display: flex; align-items: center; gap: 7px; font-size: 13px; color: #1a3a5c; font-weight: 600; }
     .dt-item .lbl { font-weight: 400; color: #555; }
-
-    /* FORM */
     .form-body { padding: 28px 32px; }
-
-    .section-title {
-      font-size: 10.5px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 1.2px; color: #1a3a5c;
-      border-bottom: 2px solid #1a3a5c;
-      padding-bottom: 5px; margin-bottom: 16px; margin-top: 24px;
-    }
+    .section-title { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: 5px; margin-bottom: 16px; margin-top: 24px; }
     .section-title:first-child { margin-top: 0; }
-
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-
     .field { display: flex; flex-direction: column; gap: 5px; }
     .field label { font-size: 11px; font-weight: 700; color: #444; text-transform: uppercase; letter-spacing: 0.4px; }
-    .field input, .field select, .field textarea {
-      border: 1.5px solid #d1d9e0; border-radius: 7px;
-      padding: 9px 12px; font-size: 14px; color: #222;
-      background: #fafbfc; transition: border-color 0.2s, box-shadow 0.2s; width: 100%;
-    }
-    .field input:focus, .field select:focus, .field textarea:focus {
-      outline: none; border-color: #1a3a5c;
-      box-shadow: 0 0 0 3px rgba(26,58,92,0.10); background: #fff;
-    }
+    .field input, .field select, .field textarea { border: 1.5px solid #d1d9e0; border-radius: 7px; padding: 9px 12px; font-size: 14px; color: #222; background: #fafbfc; transition: border-color 0.2s, box-shadow 0.2s; width: 100%; }
+    .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: #1a3a5c; box-shadow: 0 0 0 3px rgba(26,58,92,0.10); background: #fff; }
     .field textarea { min-height: 85px; resize: vertical; font-family: inherit; }
-    .field select {
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231a3a5c' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right 11px center; padding-right: 34px; cursor: pointer;
-    }
-
-    /* FOTOS */
-    .upload-area {
-      border: 2px dashed #b0c4de; border-radius: 10px;
-      background: #f4f7fb; padding: 20px; text-align: center;
-      cursor: pointer; transition: border-color 0.2s, background 0.2s; position: relative;
-    }
+    .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231a3a5c' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 11px center; padding-right: 34px; cursor: pointer; }
+    .upload-area { border: 2px dashed #b0c4de; border-radius: 10px; background: #f4f7fb; padding: 20px; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; position: relative; }
     .upload-area:hover { border-color: #1a3a5c; background: #e8f0fe; }
     .upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
     .upload-area .ui { font-size: 28px; margin-bottom: 6px; }
     .upload-area p { font-size: 13px; color: #555; }
     .upload-area p strong { color: #1a3a5c; }
-
     #photo-preview { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
     .thumb { position: relative; width: 90px; height: 90px; border-radius: 7px; overflow: hidden; border: 2px solid #d1d9e0; }
     .thumb img { width: 100%; height: 100%; object-fit: cover; }
     .thumb .rm { position: absolute; top: 2px; right: 2px; background: rgba(180,0,0,0.78); color:#fff; border:none; border-radius:50%; width:18px; height:18px; font-size:11px; line-height:18px; text-align:center; cursor:pointer; font-weight:bold; display:none; }
     .thumb:hover .rm { display: block; }
-
-    /* ACTIONS (form) */
-    .form-actions {
-      display: flex; gap: 12px; margin-top: 28px;
-      padding-top: 20px; border-top: 1px solid #e5e9f0;
-      flex-wrap: wrap;
-    }
-    .btn {
-      display: inline-flex; align-items: center; gap: 7px;
-      padding: 11px 22px; border-radius: 8px; font-size: 14px;
-      font-weight: 700; cursor: pointer; border: none;
-      transition: background 0.18s, transform 0.1s;
-    }
+    .form-actions { display: flex; gap: 12px; margin-top: 28px; padding-top: 20px; border-top: 1px solid #e5e9f0; flex-wrap: wrap; }
+    .btn { display: inline-flex; align-items: center; gap: 7px; padding: 11px 22px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; border: none; transition: background 0.18s, transform 0.1s; }
     .btn:active { transform: scale(0.97); }
-    .btn-primary { background: #1a3a5c; color: #fff; }
+    .btn-primary   { background: #1a3a5c; color: #fff; }
     .btn-primary:hover { background: #14304f; }
     .btn-secondary { background: #e8f0fe; color: #1a3a5c; }
     .btn-secondary:hover { background: #d0e2fb; }
-    .btn-success { background: #1e7e34; color: #fff; }
+    .btn-success   { background: #1e7e34; color: #fff; }
     .btn-success:hover { background: #196b2c; }
     .btn-danger-soft { background: #fde8e8; color: #c0392b; }
     .btn-danger-soft:hover { background: #fbd0d0; }
-
-    /* RECORDS TABLE */
-    .records-header {
-      background: #1a3a5c; color: #fff;
-      padding: 16px 32px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
+    /* Records */
+    .records-header { background: #1a3a5c; color: #fff; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
     .records-header h2 { font-size: 15px; font-weight: 700; }
-    .badge {
-      background: #e8f0fe; color: #1a3a5c;
-      border-radius: 20px; padding: 3px 12px; font-size: 13px; font-weight: 700;
-    }
+    .records-header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .badge { background: #e8f0fe; color: #1a3a5c; border-radius: 20px; padding: 3px 12px; font-size: 13px; font-weight: 700; }
+    .btn-hdr { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 7px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; transition: background 0.18s; }
+    .btn-hdr-save { background: #0077b6; color: #fff; }
+    .btn-hdr-save:hover { background: #005f8e; }
+    .btn-hdr-load { background: rgba(255,255,255,0.15); color: #fff; border: 1.5px solid rgba(255,255,255,0.35); }
+    .btn-hdr-load:hover { background: rgba(255,255,255,0.25); }
     .records-body { padding: 20px 32px; }
     .records-actions { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
-
     .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     thead tr { background: #f0f4fa; }
@@ -137,23 +69,35 @@
     td { padding: 9px 10px; border-bottom: 1px solid #edf0f5; vertical-align: middle; color: #333; }
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: #f7f9fd; }
-    .td-del { text-align: center; }
-    .del-btn { background: none; border: none; cursor: pointer; font-size: 16px; opacity: 0.5; transition: opacity 0.2s; }
-    .del-btn:hover { opacity: 1; }
+    .td-actions { text-align: center; white-space: nowrap; }
+    .icon-btn { background: none; border: none; cursor: pointer; font-size: 16px; opacity: 0.55; transition: opacity 0.2s; padding: 2px 4px; }
+    .icon-btn:hover { opacity: 1; }
     .empty-msg { text-align: center; color: #aaa; padding: 32px 0; font-size: 14px; }
-
-    /* TOAST */
-    #toast {
-      position: fixed; bottom: 28px; left: 50%;
-      transform: translateX(-50%) translateY(80px);
-      background: #1a3a5c; color: #fff;
-      padding: 11px 26px; border-radius: 28px;
-      font-size: 14px; font-weight: 600;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-      opacity: 0; transition: opacity 0.3s, transform 0.3s; z-index: 999;
-    }
+    .foto-badge { display: inline-flex; align-items: center; gap: 4px; background: #e8f0fe; color: #1a3a5c; border: none; border-radius: 12px; padding: 3px 9px; font-size: 12px; font-weight: 700; cursor: pointer; transition: background 0.18s; }
+    .foto-badge:hover { background: #c5d8f7; }
+    .foto-badge-none { color: #bbb; font-size: 12px; }
+    /* Modal fotos */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.72); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: #fff; border-radius: 14px; max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 8px 40px rgba(0,0,0,0.3); }
+    .modal-head { background: #1a3a5c; color: #fff; padding: 16px 22px; display: flex; align-items: center; justify-content: space-between; border-radius: 14px 14px 0 0; }
+    .modal-head h3 { font-size: 15px; font-weight: 700; }
+    .modal-close { background: rgba(255,255,255,0.18); border: none; color: #fff; border-radius: 50%; width: 30px; height: 30px; font-size: 18px; cursor: pointer; line-height: 30px; text-align: center; }
+    .modal-close:hover { background: rgba(255,255,255,0.3); }
+    .modal-body { padding: 20px 22px; }
+    .fotos-grid-modal { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 14px; }
+    .foto-full { width: 150px; height: 150px; border-radius: 9px; overflow: hidden; border: 2px solid #d1d9e0; cursor: pointer; transition: transform 0.15s, border-color 0.15s; }
+    .foto-full:hover { transform: scale(1.04); border-color: #1a3a5c; }
+    .foto-full img { width: 100%; height: 100%; object-fit: cover; }
+    /* Lightbox */
+    .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 2000; align-items: center; justify-content: center; }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 90vw; max-height: 85vh; border-radius: 8px; box-shadow: 0 4px 32px rgba(0,0,0,0.5); }
+    .lightbox-close { position: absolute; top: 18px; right: 24px; background: rgba(255,255,255,0.15); border: none; color: #fff; border-radius: 50%; width: 36px; height: 36px; font-size: 20px; cursor: pointer; line-height: 36px; text-align: center; }
+    .lightbox-close:hover { background: rgba(255,255,255,0.3); }
+    /* Toast */
+    #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1a3a5c; color: #fff; padding: 11px 26px; border-radius: 28px; font-size: 14px; font-weight: 600; box-shadow: 0 4px 16px rgba(0,0,0,0.18); opacity: 0; transition: opacity 0.3s, transform 0.3s; z-index: 999; }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
     @media (max-width: 600px) {
       .grid-2, .grid-3 { grid-template-columns: 1fr; }
       .form-body, .records-body { padding: 20px 16px; }
@@ -163,11 +107,10 @@
   </style>
 </head>
 <body>
-
-<!-- ═══ FORMULÁRIO ═══ -->
 <div class="container">
-<div class="card">
 
+<!-- FORMULÁRIO -->
+<div class="card">
   <div class="header">
     <div class="header-icon">📋</div>
     <div class="header-text">
@@ -175,14 +118,11 @@
       <p>Registro de ocorrências</p>
     </div>
   </div>
-
   <div class="datetime-bar">
     <div class="dt-item">📅 <span class="lbl">Data:</span> <span id="auto-date">—</span></div>
     <div class="dt-item">🕐 <span class="lbl">Hora:</span> <span id="auto-time">—</span></div>
   </div>
-
   <div class="form-body">
-
     <div class="section-title">Identificação</div>
     <div class="grid-2">
       <div class="field">
@@ -203,27 +143,23 @@
         <input type="text" id="cliente" placeholder="Nome do cliente"/>
       </div>
     </div>
-
     <div class="section-title">Documentos</div>
     <div class="grid-3">
       <div class="field"><label>NF</label><input type="text" id="nf" placeholder="Nº da Nota Fiscal"/></div>
       <div class="field"><label>DI</label><input type="text" id="di" placeholder="Nº da DI"/></div>
       <div class="field"><label>DEC</label><input type="text" id="dec" placeholder="Nº da DEC"/></div>
     </div>
-
     <div class="section-title">Transporte</div>
     <div class="grid-3">
       <div class="field"><label>Motorista</label><input type="text" id="motorista" placeholder="Nome do motorista"/></div>
-      <div class="field"><label>Veículo</label><input type="text" id="veiculo" placeholder="Placa / identificação"/></div>
+      <div class="field"><label>Veículo / Placa</label><input type="text" id="veiculo" placeholder="Placa / identificação"/></div>
       <div class="field"><label>Qtd. Volumes</label><input type="number" id="qtd-vol" placeholder="0" min="0"/></div>
     </div>
-
     <div class="section-title">Descrição da Avaria</div>
     <div class="field">
       <label>Descrição detalhada</label>
       <textarea id="descricao" placeholder="Descreva a falta ou avaria identificada..."></textarea>
     </div>
-
     <div class="section-title">Fotos</div>
     <div class="upload-area" id="upload-area">
       <input type="file" id="foto-input" accept="image/*" multiple/>
@@ -232,43 +168,38 @@
       <p style="font-size:12px;margin-top:3px;color:#888;">JPG, PNG, WEBP — múltiplos arquivos aceitos</p>
     </div>
     <div id="photo-preview"></div>
-
     <div class="form-actions">
       <button class="btn btn-primary" onclick="saveRecord()">💾 Registrar Ocorrência</button>
       <button class="btn btn-secondary" onclick="clearForm()">🔄 Limpar Campos</button>
     </div>
-
   </div>
 </div>
 
-<!-- ═══ REGISTROS ═══ -->
+<!-- REGISTROS -->
 <div class="card">
   <div class="records-header">
     <h2>📂 Ocorrências Registradas</h2>
-    <span class="badge" id="total-badge">0 registros</span>
+    <div class="records-header-right">
+      <span class="badge" id="total-badge">0 registros</span>
+      <button class="btn-hdr btn-hdr-save" onclick="salvarArquivo()">💾 Salvar .tfa</button>
+      <label class="btn-hdr btn-hdr-load" style="cursor:pointer;margin:0;">
+        📂 Carregar .tfa
+        <input type="file" accept=".tfa,.json" onchange="carregarArquivo(this)" style="display:none;">
+      </label>
+    </div>
   </div>
   <div class="records-body">
     <div class="records-actions">
-      <button class="btn btn-success" onclick="exportExcel()">📊 Exportar para Excel</button>
+      <button class="btn btn-success" onclick="exportExcel()">📊 Exportar Excel</button>
       <button class="btn btn-danger-soft" onclick="clearAll()">🗑️ Apagar Todos</button>
     </div>
     <div class="table-wrap">
-      <table id="records-table">
+      <table>
         <thead>
           <tr>
-            <th>#</th>
-            <th>Data</th>
-            <th>Hora</th>
-            <th>Conferente</th>
-            <th>Cliente</th>
-            <th>NF</th>
-            <th>DI</th>
-            <th>DEC</th>
-            <th>Motorista</th>
-            <th>Veículo</th>
-            <th>Qtd Vol</th>
-            <th>Descrição</th>
-            <th></th>
+            <th>#</th><th>Data</th><th>Hora</th><th>Conferente</th><th>Cliente</th>
+            <th>NF</th><th>DI</th><th>DEC</th><th>Motorista</th><th>Veículo</th>
+            <th>Vol</th><th>Descrição</th><th>Fotos</th><th></th>
           </tr>
         </thead>
         <tbody id="records-body"></tbody>
@@ -276,184 +207,428 @@
     </div>
   </div>
 </div>
+
+</div><!-- /container -->
+
+<!-- MODAL FOTOS -->
+<div class="modal-overlay" id="modal-fotos">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="modal-fotos-title">Fotos da Ocorrência</h3>
+      <button class="modal-close" onclick="fecharModalFotos()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="modal-fotos-info" style="font-size:13px;color:#555;margin-bottom:4px;"></div>
+      <div class="fotos-grid-modal" id="modal-fotos-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="fecharLightbox()">
+  <button class="lightbox-close" onclick="fecharLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt=""/>
 </div>
 
 <div id="toast"></div>
 
 <script>
-// ─── DATE / TIME ─────────────────────────────────────────────
+// ─── DATA / HORA ──────────────────────────────────────────────
 function pad(n){ return String(n).padStart(2,'0'); }
 function getNow() {
-  const now = new Date();
+  const n = new Date();
   return {
-    date: `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()}`,
-    time: `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
+    date: `${pad(n.getDate())}/${pad(n.getMonth()+1)}/${n.getFullYear()}`,
+    time: `${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`
   };
 }
 function tick() {
-  const {date, time} = getNow();
-  document.getElementById('auto-date').textContent = date;
-  document.getElementById('auto-time').textContent = time;
+  const {date,time}=getNow();
+  document.getElementById('auto-date').textContent=date;
+  document.getElementById('auto-time').textContent=time;
 }
-tick(); setInterval(tick, 1000);
+tick(); setInterval(tick,1000);
 
-// ─── FOTOS ───────────────────────────────────────────────────
+// ─── ESTADO GLOBAL ────────────────────────────────────────────
+let records = [];
+
+// ─── FOTOS (formulário) ───────────────────────────────────────
 let selectedFiles = [];
 document.getElementById('foto-input').addEventListener('change', function(e){
-  handleFiles(Array.from(e.target.files));
-  e.target.value = '';
+  handleFiles(Array.from(e.target.files)); e.target.value='';
 });
 const uploadArea = document.getElementById('upload-area');
-uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.style.borderColor='#1a3a5c'; });
-uploadArea.addEventListener('dragleave', () => { uploadArea.style.borderColor=''; });
-uploadArea.addEventListener('drop', e => {
+uploadArea.addEventListener('dragover', e=>{ e.preventDefault(); uploadArea.style.borderColor='#1a3a5c'; });
+uploadArea.addEventListener('dragleave', ()=>{ uploadArea.style.borderColor=''; });
+uploadArea.addEventListener('drop', e=>{
   e.preventDefault(); uploadArea.style.borderColor='';
   handleFiles(Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')));
 });
-function handleFiles(files) {
-  files.forEach(file => {
-    if (!file.type.startsWith('image/')) return;
-    const reader = new FileReader();
-    reader.onload = ev => { selectedFiles.push({id: Date.now()+Math.random(), src: ev.target.result}); renderThumbs(); };
+function handleFiles(files){
+  files.forEach(file=>{
+    if(!file.type.startsWith('image/')) return;
+    const reader=new FileReader();
+    reader.onload=ev=>{ selectedFiles.push({id:Date.now()+Math.random(),src:ev.target.result}); renderThumbs(); };
     reader.readAsDataURL(file);
   });
 }
-function renderThumbs() {
-  const p = document.getElementById('photo-preview');
-  p.innerHTML = '';
-  selectedFiles.forEach(item => {
-    const d = document.createElement('div'); d.className='thumb';
-    d.innerHTML = `<img src="${item.src}"/><button class="rm" onclick="removePhoto('${item.id}')">✕</button>`;
+function renderThumbs(){
+  const p=document.getElementById('photo-preview'); p.innerHTML='';
+  selectedFiles.forEach(item=>{
+    const d=document.createElement('div'); d.className='thumb';
+    d.innerHTML=`<img src="${item.src}"/><button class="rm" onclick="removePhoto('${item.id}')">✕</button>`;
     p.appendChild(d);
   });
 }
-function removePhoto(id) {
-  selectedFiles = selectedFiles.filter(f=>String(f.id)!==String(id)); renderThumbs();
+function removePhoto(id){ selectedFiles=selectedFiles.filter(f=>String(f.id)!==String(id)); renderThumbs(); }
+
+// ─── PERSISTÊNCIA LS (sem fotos) ─────────────────────────────
+function persistToLS(){
+  try {
+    const slim=records.map(r=>({...r,fotosData:undefined,fotos:r.fotosData?r.fotosData.length:(r.fotos||0)}));
+    localStorage.setItem('tfa_records_meta',JSON.stringify(slim));
+  } catch(e){}
+}
+function loadFromLS(){
+  try {
+    const raw=localStorage.getItem('tfa_records_meta');
+    if(!raw) return;
+    const parsed=JSON.parse(raw);
+    if(records.length===0&&parsed.length>0){
+      records=parsed;
+      showToast(`ℹ️ ${records.length} registro(s) da sessão anterior restaurados (sem fotos). Carregue o .tfa para recuperar as imagens.`,5000);
+    }
+  } catch(e){}
 }
 
-// ─── STORAGE ─────────────────────────────────────────────────
-function loadRecords() {
-  try { return JSON.parse(localStorage.getItem('tfa_records') || '[]'); } catch(e){ return []; }
-}
-function saveRecords(recs) {
-  localStorage.setItem('tfa_records', JSON.stringify(recs));
+// ─── SALVAR .tfa ──────────────────────────────────────────────
+function salvarArquivo(){
+  if(!records.length){ showToast('⚠️ Nenhum registro para salvar.'); return; }
+  const payload={versao:'2.0',app:'PORTOEX-TFA',exportado:new Date().toISOString(),registros:records};
+  const blob=new Blob([JSON.stringify(payload)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`TFA_${getNow().date.replace(/\//g,'-')}.tfa`; a.click();
+  URL.revokeObjectURL(url);
+  const totalF=records.reduce((s,r)=>s+(r.fotosData?r.fotosData.length:0),0);
+  showToast(`✅ Arquivo salvo! ${records.length} ocorrência(s) · ${totalF} foto(s)`);
 }
 
-// ─── SAVE ────────────────────────────────────────────────────
-function saveRecord() {
-  const {date, time} = getNow();
-  const rec = {
-    id: Date.now(),
-    date,
-    time,
-    conferente: document.getElementById('conferente').value,
-    cliente:    document.getElementById('cliente').value.trim(),
-    nf:         document.getElementById('nf').value.trim(),
-    di:         document.getElementById('di').value.trim(),
-    dec:        document.getElementById('dec').value.trim(),
-    motorista:  document.getElementById('motorista').value.trim(),
-    veiculo:    document.getElementById('veiculo').value.trim(),
-    qtdVol:     document.getElementById('qtd-vol').value.trim(),
-    descricao:  document.getElementById('descricao').value.trim(),
-    fotos:      selectedFiles.length
+// ─── CARREGAR .tfa ────────────────────────────────────────────
+function carregarArquivo(input){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try {
+      const payload=JSON.parse(e.target.result);
+      const dados=payload.registros||payload;
+      if(!Array.isArray(dados)||!dados.length){ showToast('⚠️ Arquivo vazio ou inválido.'); return; }
+      if(records.length>0&&!confirm(`Substituir ${records.length} registro(s) em aberto?`)){ input.value=''; return; }
+      records=dados; persistToLS(); renderTable();
+      const totalF=records.reduce((s,r)=>s+(r.fotosData?r.fotosData.length:0),0);
+      showToast(`✅ Carregado! ${records.length} ocorrência(s) · ${totalF} foto(s)`,3500);
+    } catch(err){ showToast('❌ Erro: '+err.message); }
+    input.value='';
   };
-  if (!rec.conferente) { showToast('⚠️ Selecione o conferente antes de registrar.'); return; }
-  if (!rec.cliente)    { showToast('⚠️ Preencha o campo Cliente.'); return; }
+  reader.readAsText(file,'UTF-8');
+}
 
-  const recs = loadRecords();
-  recs.push(rec);
-  saveRecords(recs);
+// ─── REGISTRAR ────────────────────────────────────────────────
+function saveRecord(){
+  const {date,time}=getNow();
+  const conferente=document.getElementById('conferente').value;
+  const cliente=document.getElementById('cliente').value.trim();
+  if(!conferente){ showToast('⚠️ Selecione o conferente.'); return; }
+  if(!cliente){ showToast('⚠️ Preencha o campo Cliente.'); return; }
+  const rec={
+    id:Date.now(), date, time, conferente, cliente,
+    nf:       document.getElementById('nf').value.trim(),
+    di:       document.getElementById('di').value.trim(),
+    dec:      document.getElementById('dec').value.trim(),
+    motorista:document.getElementById('motorista').value.trim(),
+    veiculo:  document.getElementById('veiculo').value.trim(),
+    qtdVol:   document.getElementById('qtd-vol').value.trim(),
+    descricao:document.getElementById('descricao').value.trim(),
+    fotos:    selectedFiles.length,
+    fotosData:selectedFiles.map(f=>f.src)
+  };
+  records.push(rec);
+  persistToLS();
   renderTable();
   clearForm();
-  showToast('✅ Ocorrência registrada com sucesso!');
+  showToast(`✅ Ocorrência registrada! Abrindo PDF...`);
+  setTimeout(()=>gerarPDF(rec), 400);
 }
 
-// ─── TABLE ───────────────────────────────────────────────────
-function renderTable() {
-  const recs = loadRecords();
-  const tbody = document.getElementById('records-body');
-  document.getElementById('total-badge').textContent = `${recs.length} registro${recs.length!==1?'s':''}`;
-  if (recs.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="13" class="empty-msg">Nenhuma ocorrência registrada ainda.</td></tr>`;
+// ─── TABELA ───────────────────────────────────────────────────
+function renderTable(){
+  const tbody=document.getElementById('records-body');
+  document.getElementById('total-badge').textContent=`${records.length} registro${records.length!==1?'s':''}`;
+  if(!records.length){
+    tbody.innerHTML=`<tr><td colspan="14" class="empty-msg">Nenhuma ocorrência registrada ainda.</td></tr>`;
     return;
   }
-  tbody.innerHTML = recs.map((r, i) => `
-    <tr>
+  tbody.innerHTML=records.map((r,i)=>{
+    const nF=r.fotosData?r.fotosData.length:(r.fotos||0);
+    const fotaCell=nF>0
+      ?`<button class="foto-badge" onclick="verFotos(${r.id})">📷 ${nF}</button>`
+      :`<span class="foto-badge-none">—</span>`;
+    const desc=(r.descricao||'—').replace(/"/g,"'");
+    return `<tr>
       <td><strong>${i+1}</strong></td>
-      <td>${r.date}</td>
-      <td>${r.time}</td>
-      <td>${r.conferente}</td>
-      <td>${r.cliente}</td>
-      <td>${r.nf||'—'}</td>
-      <td>${r.di||'—'}</td>
-      <td>${r.dec||'—'}</td>
-      <td>${r.motorista||'—'}</td>
-      <td>${r.veiculo||'—'}</td>
-      <td>${r.qtdVol||'—'}</td>
-      <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${r.descricao}">${r.descricao||'—'}</td>
-      <td class="td-del"><button class="del-btn" onclick="deleteRecord(${r.id})" title="Excluir">🗑️</button></td>
-    </tr>`).join('');
+      <td>${r.date}</td><td>${r.time}</td>
+      <td>${r.conferente}</td><td>${r.cliente}</td>
+      <td>${r.nf||'—'}</td><td>${r.di||'—'}</td><td>${r.dec||'—'}</td>
+      <td>${r.motorista||'—'}</td><td>${r.veiculo||'—'}</td><td>${r.qtdVol||'—'}</td>
+      <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${desc}">${r.descricao||'—'}</td>
+      <td>${fotaCell}</td>
+      <td class="td-actions">
+        <button class="icon-btn" onclick="gerarPDF(records.find(x=>x.id===${r.id}))" title="Gerar PDF">📄</button>
+        <button class="icon-btn" onclick="deleteRecord(${r.id})" title="Excluir">🗑️</button>
+      </td>
+    </tr>`;
+  }).join('');
 }
-
-function deleteRecord(id) {
-  if (!confirm('Excluir esta ocorrência?')) return;
-  const recs = loadRecords().filter(r => r.id !== id);
-  saveRecords(recs); renderTable();
+function deleteRecord(id){
+  if(!confirm('Excluir esta ocorrência?')) return;
+  records=records.filter(r=>r.id!==id); persistToLS(); renderTable();
   showToast('🗑️ Ocorrência excluída.');
 }
-
-function clearAll() {
-  if (!confirm('Apagar TODOS os registros? Esta ação não pode ser desfeita.')) return;
-  saveRecords([]); renderTable();
-  showToast('🗑️ Todos os registros foram apagados.');
+function clearAll(){
+  if(!confirm('Apagar TODOS os registros?')) return;
+  records=[]; persistToLS(); renderTable();
+  showToast('🗑️ Todos os registros apagados.');
 }
 
-// ─── EXPORT EXCEL ────────────────────────────────────────────
-function exportExcel() {
-  const recs = loadRecords();
-  if (recs.length === 0) { showToast('⚠️ Nenhum registro para exportar.'); return; }
+// ─── MODAL FOTOS ─────────────────────────────────────────────
+function verFotos(id){
+  const rec=records.find(r=>r.id===id); if(!rec) return;
+  const fotos=rec.fotosData||[];
+  if(!fotos.length){ showToast('ℹ️ Sem fotos armazenadas neste registro.'); return; }
+  document.getElementById('modal-fotos-title').textContent=`Fotos — ${rec.cliente} (${rec.date})`;
+  document.getElementById('modal-fotos-info').textContent=`${fotos.length} foto(s) · NF: ${rec.nf||'—'} · Conferente: ${rec.conferente}`;
+  document.getElementById('modal-fotos-grid').innerHTML=fotos.map((src,i)=>`
+    <div class="foto-full" onclick="abrirLightbox('${src}')"><img src="${src}" alt="Foto ${i+1}"/></div>`).join('');
+  document.getElementById('modal-fotos').classList.add('open');
+}
+function fecharModalFotos(){ document.getElementById('modal-fotos').classList.remove('open'); }
+document.getElementById('modal-fotos').addEventListener('click',function(e){ if(e.target===this) fecharModalFotos(); });
+function abrirLightbox(src){ document.getElementById('lightbox-img').src=src; document.getElementById('lightbox').classList.add('open'); }
+function fecharLightbox(){ document.getElementById('lightbox').classList.remove('open'); document.getElementById('lightbox-img').src=''; }
 
-  const headers = ['#','Data','Hora','Conferente','Cliente','NF','DI','DEC','Motorista','Veículo','Qtd Volumes','Descrição da Avaria','Fotos (qtd)'];
-  const rows = recs.map((r, i) => [
-    i+1, r.date, r.time, r.conferente, r.cliente,
-    r.nf||'', r.di||'', r.dec||'', r.motorista||'', r.veiculo||'',
-    r.qtdVol||'', r.descricao||'', r.fotos||0
-  ]);
-
-  const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
-
-  // Column widths
-  ws['!cols'] = [
-    {wch:4},{wch:12},{wch:10},{wch:14},{wch:20},
-    {wch:14},{wch:14},{wch:14},{wch:16},{wch:14},
-    {wch:10},{wch:36},{wch:10}
-  ];
-
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'TFA');
-
-  const today = getNow().date.replace(/\//g,'-');
-  XLSX.writeFile(wb, `TFA_${today}.xlsx`);
-  showToast('📊 Excel exportado com sucesso!');
+// ─── EXPORTAR EXCEL ───────────────────────────────────────────
+function exportExcel(){
+  if(!records.length){ showToast('⚠️ Nenhum registro para exportar.'); return; }
+  const headers=['#','Data','Hora','Conferente','Cliente','NF','DI','DEC','Motorista','Veículo','Qtd Volumes','Descrição da Avaria','Fotos (qtd)'];
+  const rows=records.map((r,i)=>[i+1,r.date,r.time,r.conferente,r.cliente,r.nf||'',r.di||'',r.dec||'',r.motorista||'',r.veiculo||'',r.qtdVol||'',r.descricao||'',r.fotosData?r.fotosData.length:(r.fotos||0)]);
+  const ws=XLSX.utils.aoa_to_sheet([headers,...rows]);
+  ws['!cols']=[{wch:4},{wch:12},{wch:10},{wch:14},{wch:20},{wch:14},{wch:14},{wch:14},{wch:16},{wch:14},{wch:10},{wch:36},{wch:10}];
+  const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'TFA');
+  XLSX.writeFile(wb,`TFA_${getNow().date.replace(/\//g,'-')}.xlsx`);
+  showToast('📊 Excel exportado!');
 }
 
-// ─── CLEAR FORM ──────────────────────────────────────────────
-function clearForm() {
-  ['conferente','cliente','nf','di','dec','motorista','veiculo','qtd-vol','descricao'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el.tagName === 'SELECT') el.selectedIndex = 0; else el.value = '';
+// ─── LIMPAR FORMULÁRIO ────────────────────────────────────────
+function clearForm(){
+  ['conferente','cliente','nf','di','dec','motorista','veiculo','qtd-vol','descricao'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el.tagName==='SELECT') el.selectedIndex=0; else el.value='';
   });
-  selectedFiles = []; renderThumbs();
+  selectedFiles=[]; renderThumbs();
 }
 
-// ─── TOAST ───────────────────────────────────────────────────
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
+// ─── TOAST ────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg,dur=2800){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),dur);
 }
 
-// ─── INIT ────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+// ─── GERAR PDF ────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+function gerarPDF(rec){
+  if(!rec){ showToast('❌ Registro não encontrado.'); return; }
+  const fotos = rec.fotosData || [];
+  const numTFA = String(rec.id).slice(-6);
+
+  // ── bloco de fotos
+  let fotosHtml = '';
+  if(fotos.length > 0){
+    const items = fotos.map((src,i)=>`
+      <div class="pf-foto">
+        <img src="${src}" alt="Foto ${i+1}"/>
+        <div class="pf-foto-label">Foto ${i+1}</div>
+      </div>`).join('');
+    fotosHtml = `
+      <div class="pf-section-title">REGISTRO FOTOGRÁFICO (${fotos.length} foto${fotos.length>1?'s':''})</div>
+      <div class="pf-fotos-grid">${items}</div>`;
+  }
+
+  const html = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<title>TFA-${numTFA} · ${rec.cliente}</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm 18mm 16mm; }
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .no-print { display: none !important; }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; font-size: 12px; color: #222; background: #fff; }
+
+  /* ── HEADER ── */
+  .pf-header {
+    background: #1a3a5c; color: #fff;
+    padding: 14px 20px; border-radius: 6px;
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .pf-header-left { display: flex; align-items: center; gap: 12px; }
+  .pf-header-icon { font-size: 28px; }
+  .pf-header-title { font-size: 16px; font-weight: 700; letter-spacing: 0.3px; }
+  .pf-header-sub   { font-size: 10px; opacity: 0.7; margin-top: 3px; }
+  .pf-header-right { text-align: right; font-size: 11px; opacity: 0.9; line-height: 1.7; }
+  .pf-header-num   { font-size: 15px; font-weight: 700; opacity: 1; }
+
+  /* ── SECTION TITLE ── */
+  .pf-section-title {
+    font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.1px;
+    color: #1a3a5c; border-bottom: 2px solid #1a3a5c;
+    padding-bottom: 4px; margin-bottom: 10px; margin-top: 16px;
+  }
+  .pf-section-title:first-of-type { margin-top: 0; }
+
+  /* ── GRID ── */
+  .pf-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 4px; }
+  .pf-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 4px; }
+  .pf-field label { font-size: 9px; font-weight: 700; text-transform: uppercase; color: #777; display: block; margin-bottom: 3px; letter-spacing: 0.3px; }
+  .pf-field .pf-val { border: 1px solid #cdd5de; border-radius: 4px; padding: 6px 9px; background: #f8fafc; min-height: 30px; font-size: 12px; color: #111; line-height: 1.4; }
+
+  /* ── DESCRIÇÃO ── */
+  .pf-desc-box { border: 1px solid #cdd5de; border-radius: 4px; padding: 9px 10px; background: #f8fafc; min-height: 60px; line-height: 1.6; font-size: 12px; white-space: pre-wrap; }
+
+  /* ── FOTOS ── */
+  .pf-fotos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; page-break-inside: auto; }
+  .pf-foto { text-align: center; break-inside: avoid; }
+  .pf-foto img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 5px; border: 1px solid #cdd5de; display: block; }
+  .pf-foto-label { font-size: 9px; color: #999; margin-top: 3px; }
+
+  /* ── ASSINATURAS ── */
+  .pf-assinaturas { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 30px; }
+  .pf-assin { border-top: 1.5px solid #333; padding-top: 6px; text-align: center; font-size: 10px; color: #444; line-height: 1.6; }
+  .pf-assin strong { display: block; font-size: 11px; color: #111; }
+
+  /* ── FOOTER ── */
+  .pf-footer { margin-top: 20px; border-top: 1px solid #d1d9e0; padding-top: 10px; display: flex; justify-content: space-between; font-size: 9px; color: #999; }
+
+  /* ── BOTÃO IMPRESSÃO ── */
+  .pf-print-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: #1a3a5c; padding: 12px 24px;
+    display: flex; gap: 12px; align-items: center; justify-content: center;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.3); z-index: 100;
+  }
+  .pf-btn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 22px; border-radius: 7px; font-size: 14px; font-weight: 700; cursor: pointer; border: none; }
+  .pf-btn-print { background: #fff; color: #1a3a5c; }
+  .pf-btn-print:hover { background: #e8f0fe; }
+  .pf-btn-close { background: rgba(255,255,255,0.15); color: #fff; border: 1.5px solid rgba(255,255,255,0.35); }
+  .pf-btn-close:hover { background: rgba(255,255,255,0.25); }
+  .pf-tip { color: rgba(255,255,255,0.7); font-size: 12px; }
+  body { padding-bottom: 70px; }
+  @media print { body { padding-bottom: 0; } }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="pf-header">
+  <div class="pf-header-left">
+    <div class="pf-header-icon">📋</div>
+    <div>
+      <div class="pf-header-title">TERMO DE FALTA E AVARIAS — TFA</div>
+      <div class="pf-header-sub">PORTOEX Logística · Registro de Ocorrência</div>
+    </div>
+  </div>
+  <div class="pf-header-right">
+    <div class="pf-header-num">Nº ${numTFA}</div>
+    <div>${rec.date}</div>
+    <div>${rec.time}</div>
+  </div>
+</div>
+
+<!-- IDENTIFICAÇÃO -->
+<div class="pf-section-title">Identificação</div>
+<div class="pf-grid-2">
+  <div class="pf-field"><label>Conferente</label><div class="pf-val">${rec.conferente||'—'}</div></div>
+  <div class="pf-field"><label>Cliente</label><div class="pf-val">${rec.cliente||'—'}</div></div>
+</div>
+
+<!-- DOCUMENTOS -->
+<div class="pf-section-title">Documentos</div>
+<div class="pf-grid-3">
+  <div class="pf-field"><label>Nota Fiscal (NF)</label><div class="pf-val">${rec.nf||'—'}</div></div>
+  <div class="pf-field"><label>DI</label><div class="pf-val">${rec.di||'—'}</div></div>
+  <div class="pf-field"><label>DEC</label><div class="pf-val">${rec.dec||'—'}</div></div>
+</div>
+
+<!-- TRANSPORTE -->
+<div class="pf-section-title">Transporte</div>
+<div class="pf-grid-3">
+  <div class="pf-field"><label>Motorista</label><div class="pf-val">${rec.motorista||'—'}</div></div>
+  <div class="pf-field"><label>Veículo / Placa</label><div class="pf-val">${rec.veiculo||'—'}</div></div>
+  <div class="pf-field"><label>Qtd. Volumes</label><div class="pf-val">${rec.qtdVol||'—'}</div></div>
+</div>
+
+<!-- DESCRIÇÃO -->
+<div class="pf-section-title">Descrição da Avaria</div>
+<div class="pf-desc-box">${(rec.descricao||'Sem descrição informada.').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+
+<!-- FOTOS -->
+${fotosHtml}
+
+<!-- ASSINATURAS -->
+<div class="pf-assinaturas">
+  <div class="pf-assin">
+    <strong>${rec.conferente}</strong>
+    Conferente / Responsável pelo Registro
+  </div>
+  <div class="pf-assin">
+    <strong>${rec.motorista||'_________________________'}</strong>
+    Motorista / Responsável pela Carga
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="pf-footer">
+  <span>PORTOEX Logística · Gerado em ${new Date().toLocaleString('pt-BR')}</span>
+  <span>TFA Nº ${numTFA}</span>
+</div>
+
+<!-- BARRA DE IMPRESSÃO -->
+<div class="pf-print-bar no-print">
+  <button class="pf-btn pf-btn-print" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+  <button class="pf-btn pf-btn-close" onclick="window.close()">✕ Fechar</button>
+  <span class="pf-tip">Dica: no diálogo de impressão escolha "Salvar como PDF"</span>
+</div>
+
+<script>
+  window.onload = function(){ setTimeout(()=>window.print(), 700); };
+<\/script>
+</body>
+</html>`;
+
+  const win = window.open('','_blank','width=900,height=700');
+  if(!win){ showToast('⚠️ Pop-up bloqueado! Clique no ícone 📄 da linha para gerar o PDF manualmente.'); return; }
+  win.document.write(html);
+  win.document.close();
+}
+
+// ─── INIT ─────────────────────────────────────────────────────
+loadFromLS();
 renderTable();
 </script>
 </body>
