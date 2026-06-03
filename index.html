@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Termo de Falta e Avarias (TFA)</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; min-height: 100vh; padding: 30px 16px; }
@@ -74,6 +75,53 @@
     /* Toast */
     #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1a3a5c; color: #fff; padding: 11px 26px; border-radius: 28px; font-size: 14px; font-weight: 600; box-shadow: 0 4px 16px rgba(0,0,0,0.18); opacity: 0; transition: opacity 0.3s, transform 0.3s; z-index: 999; pointer-events: none; }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    /* ── OCR / LEITURA DE DOCUMENTO ── */
+    .ocr-area { border: 2px dashed #1a3a5c; border-radius: 10px; background: #f4f7fb; padding: 18px 20px; text-align: center; position: relative; transition: border-color 0.2s, background 0.2s; }
+    .ocr-area:hover { background: #e8f0fe; }
+    .ocr-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 14px; }
+    .btn-cam  { background: #1a3a5c; color: #fff; }
+    .btn-cam:hover { background: #14304f; }
+    .btn-img  { background: #e8f0fe; color: #1a3a5c; }
+    .btn-img:hover { background: #d0e2fb; }
+    .ocr-preview-wrap { display: none; margin-top: 10px; }
+    .ocr-preview-wrap img { max-width: 100%; max-height: 260px; border-radius: 7px; border: 2px solid #c5d8f7; object-fit: contain; }
+    .ocr-loading { display: none; align-items: center; justify-content: center; gap: 12px; padding: 14px; background: #f0f4fa; border-radius: 8px; margin-top: 10px; }
+    .ocr-loading.show { display: flex; }
+    .ocr-spinner { width: 22px; height: 22px; border: 3px solid #c5d8f7; border-top-color: #1a3a5c; border-radius: 50%; animation: spin 0.75s linear infinite; flex-shrink: 0; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .ocr-loading-txt { font-size: 13px; color: #1a3a5c; font-weight: 600; }
+    .ocr-progress { font-size: 11px; color: #888; margin-top: 2px; }
+    /* Painel de resultado OCR */
+    .ocr-resultado { display: none; margin-top: 14px; border: 1.5px solid #c5d8f7; border-radius: 10px; overflow: hidden; }
+    .ocr-resultado.show { display: block; }
+    .ocr-res-header { background: #1a3a5c; color: #fff; padding: 10px 16px; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; }
+    .ocr-res-body { padding: 14px 16px; background: #fff; }
+    .ocr-campo { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f0f4fa; }
+    .ocr-campo:last-child { border-bottom: none; }
+    .ocr-campo input[type="checkbox"] { flex-shrink: 0; }
+    .ocr-campo-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #1a3a5c; width: 110px; flex-shrink: 0; }
+    .ocr-campo-val { flex: 1; font-size: 13px; color: #222; background: #f4f7fb; border: 1px solid #d1d9e0; border-radius: 6px; padding: 5px 9px; min-height: 30px; word-break: break-all; }
+    .ocr-campo-val:focus { outline: none; border-color: #1a3a5c; background: #fff; }
+    /* Tabela de NFs detectadas */
+    .ocr-nfs-wrap { margin-top: 10px; }
+    .ocr-nfs-titulo { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #1a3a5c; margin-bottom: 8px; }
+    .ocr-nfs-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .ocr-nfs-table th { background: #f0f4fa; padding: 6px 8px; text-align: left; font-size: 10px; text-transform: uppercase; color: #1a3a5c; border-bottom: 2px solid #d1d9e0; white-space: nowrap; }
+    .ocr-nfs-table td { padding: 6px 8px; border-bottom: 1px solid #edf0f5; vertical-align: middle; }
+    .ocr-nfs-table tr:hover td { background: #f7f9fd; }
+    .ocr-nfs-table tr.sel-nf td { background: #edf3ff; }
+    .btn-aplicar { background: #1e7e34; color: #fff; width: 100%; margin-top: 12px; justify-content: center; padding: 12px; font-size: 14px; }
+    .btn-aplicar:hover { background: #196b2c; }
+    .ocr-hint { font-size: 12px; color: #888; margin-top: 6px; }
+    /* Camera modal */
+    .cam-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+    .cam-modal.open { display: flex; }
+    .cam-video { max-width: 95vw; max-height: 65vh; border-radius: 10px; border: 3px solid #fff; }
+    .cam-btns { display: flex; gap: 12px; }
+    .cam-capture { background: #fff; color: #1a3a5c; font-size: 15px; font-weight: 700; padding: 12px 28px; border-radius: 8px; border: none; cursor: pointer; }
+    .cam-fechar  { background: rgba(255,255,255,0.15); color: #fff; font-size: 14px; padding: 12px 22px; border-radius: 8px; border: 1.5px solid rgba(255,255,255,0.4); cursor: pointer; }
+    .cam-canvas  { display: none; }
+
     @media (max-width: 600px) {
       .grid-2, .grid-3 { grid-template-columns: 1fr; }
       .form-body, .records-body { padding: 20px 16px; }
@@ -143,6 +191,71 @@
     <div class="field">
       <label>Descrição detalhada</label>
       <textarea id="descricao" placeholder="Descreva a falta ou avaria identificada..."></textarea>
+    </div>
+
+    <!-- ── LEITURA DE DOCUMENTO POR FOTO ── -->
+    <div class="section-title">Leitura Automática de Documento</div>
+    <div class="ocr-area">
+      <div class="ocr-btns">
+        <button type="button" class="btn btn-cam" onclick="abrirCamera()">📷 Tirar Foto do Documento</button>
+        <label class="btn btn-img" style="cursor:pointer;margin:0;">
+          🖼️ Carregar Imagem
+          <input type="file" id="ocr-file-input" accept="image/*" style="display:none;" onchange="processarImagemOCR(this.files[0])">
+        </label>
+      </div>
+      <div class="ocr-hint">Fotografe o documento PORTOEX — os campos serão preenchidos automaticamente</div>
+
+      <!-- Preview da imagem -->
+      <div class="ocr-preview-wrap" id="ocr-preview-wrap">
+        <img id="ocr-img-preview" src="" alt="Documento"/>
+      </div>
+
+      <!-- Loading -->
+      <div class="ocr-loading" id="ocr-loading">
+        <div class="ocr-spinner"></div>
+        <div>
+          <div class="ocr-loading-txt">Lendo documento...</div>
+          <div class="ocr-progress" id="ocr-progress-txt">Inicializando OCR</div>
+        </div>
+      </div>
+
+      <!-- Resultado -->
+      <div class="ocr-resultado" id="ocr-resultado">
+        <div class="ocr-res-header">
+          <span>✅ Dados detectados — revise e aplique</span>
+          <button type="button" style="background:none;border:none;color:#fff;cursor:pointer;font-size:18px;" onclick="limparOCR()" title="Fechar">✕</button>
+        </div>
+        <div class="ocr-res-body">
+
+          <!-- Campos do cabeçalho -->
+          <div id="ocr-campos-header"></div>
+
+          <!-- Tabela de NFs detectadas -->
+          <div class="ocr-nfs-wrap" id="ocr-nfs-wrap" style="display:none;">
+            <div class="ocr-nfs-titulo">📋 Notas Fiscais detectadas — clique para selecionar</div>
+            <div style="overflow-x:auto;">
+              <table class="ocr-nfs-table">
+                <thead><tr>
+                  <th>Sel.</th><th>Nº Pedido</th><th>Nota Fiscal</th><th>Cliente</th><th>SKU</th><th>Qtde</th>
+                </tr></thead>
+                <tbody id="ocr-nfs-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-aplicar" onclick="aplicarDadosOCR()">✅ Aplicar ao Formulário</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal câmera -->
+    <div class="cam-modal" id="cam-modal">
+      <video id="cam-video" class="cam-video" autoplay playsinline muted></video>
+      <canvas id="cam-canvas" class="cam-canvas"></canvas>
+      <div class="cam-btns">
+        <button type="button" class="cam-capture" onclick="capturarFoto()">📸 Capturar</button>
+        <button type="button" class="cam-fechar"  onclick="fecharCamera()">✕ Cancelar</button>
+      </div>
     </div>
 
     <div class="form-actions">
@@ -576,6 +689,254 @@ ${paginasHTML}
   if(!win){ showToast('⚠️ Pop-up bloqueado! Permita pop-ups para este site.'); return; }
   win.document.write(htmlCompleto);
   win.document.close();
+}
+
+// ══════════════════════════════════════════════════════════════
+// OCR — LEITURA AUTOMÁTICA DE DOCUMENTO
+// ══════════════════════════════════════════════════════════════
+
+let ocrDadosDetectados = { campos: {}, nfs: [], nfSelecionada: null };
+let camStream = null;
+
+// ── Câmera ──
+async function abrirCamera(){
+  try {
+    camStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } }
+    });
+    document.getElementById('cam-video').srcObject = camStream;
+    document.getElementById('cam-modal').classList.add('open');
+  } catch(e){
+    showToast('⚠️ Câmera não disponível. Use "Carregar Imagem".', 4000);
+  }
+}
+
+function fecharCamera(){
+  if(camStream){ camStream.getTracks().forEach(t=>t.stop()); camStream=null; }
+  document.getElementById('cam-modal').classList.remove('open');
+}
+
+function capturarFoto(){
+  const video  = document.getElementById('cam-video');
+  const canvas = document.getElementById('cam-canvas');
+  canvas.width  = video.videoWidth  || 1280;
+  canvas.height = video.videoHeight || 720;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  fecharCamera();
+  canvas.toBlob(blob => processarImagemOCR(blob), 'image/jpeg', 0.92);
+}
+
+// ── Processar imagem com Tesseract ──
+async function processarImagemOCR(fileOrBlob){
+  if(!fileOrBlob) return;
+
+  // Mostrar preview
+  const reader = new FileReader();
+  reader.onload = e => {
+    const prev = document.getElementById('ocr-img-preview');
+    prev.src = e.target.result;
+    document.getElementById('ocr-preview-wrap').style.display = 'block';
+  };
+  reader.readAsDataURL(fileOrBlob);
+
+  // Mostrar loading
+  document.getElementById('ocr-loading').classList.add('show');
+  document.getElementById('ocr-resultado').classList.remove('show');
+
+  try {
+    const worker = await Tesseract.createWorker('por+eng', 1, {
+      logger: m => {
+        if(m.status === 'recognizing text'){
+          document.getElementById('ocr-progress-txt').textContent =
+            'Reconhecendo... ' + Math.round((m.progress||0)*100) + '%';
+        } else {
+          document.getElementById('ocr-progress-txt').textContent = m.status || '';
+        }
+      }
+    });
+
+    const { data: { text } } = await worker.recognize(fileOrBlob);
+    await worker.terminate();
+
+    document.getElementById('ocr-loading').classList.remove('show');
+    parseDocumento(text);
+
+  } catch(err){
+    document.getElementById('ocr-loading').classList.remove('show');
+    showToast('❌ Erro no OCR: ' + err.message, 5000);
+    console.error(err);
+  }
+}
+
+// ── Parser do documento PORTOEX ──
+function parseDocumento(texto){
+  // Normaliza
+  const linhas = texto.split('\n').map(l => l.trim()).filter(l => l.length > 1);
+  const txt    = linhas.join('\n');
+
+  const campos = {};
+
+  // Transportadora → Motorista (linha que contém "transportadora" ou "transportad")
+  const mTransp = txt.match(/transporta(?:dora)?\s*:?\s*([A-ZÁÉÍÓÚÀÃÕÇ][^\n]{3,60})/i);
+  if(mTransp) campos.motorista = mTransp[1].trim().replace(/\s+/g,' ');
+
+  // Data/hora → pode aparecer como 2026-06-03 10:06 ou 03/06/2026
+  const mData = txt.match(/(\d{4}[-\/]\d{2}[-\/]\d{2})\s+(\d{2}:\d{2})/);
+  if(mData) campos.dataHora = mData[1] + ' ' + mData[2];
+
+  // Número da minuta / DOCA (ex: M550341769 ou DOCA12A)
+  const mMinuta = txt.match(/\bM\d{7,12}\b/);
+  if(mMinuta) campos.minuta = mMinuta[0];
+
+  // Placa do veículo  (padrão brasileiro AAA-0000 ou AAA0A00)
+  const mPlaca = txt.match(/\b([A-Z]{3}[-\s]?\d[A-Z0-9]\d{2})\b/i);
+  if(mPlaca) campos.veiculo = mPlaca[1].toUpperCase().replace(/\s/g,'');
+
+  // ── Tabela de NFs ──
+  // Tenta identificar linhas com: Pedido(10d) NF(9d) Cliente SKU Qtde
+  const nfs = [];
+  // Regex flexível para linhas de dados da tabela
+  const reLinhaTabela = /(\d{9,10})\s+(\d{6,9})\s+([A-ZÁÉÍÓÚÀÃÕÇ][^\t\n]{4,50?}?)\s+(AM\w+|MRK-\w+|[A-Z]{2}\d[\w\/-]+)\s+(\d{1,4})/gi;
+  let m;
+  while((m = reLinhaTabela.exec(txt)) !== null){
+    const pedido  = m[1];
+    const nf      = m[2].replace(/^0+/,'');   // remove zeros à esquerda p/ exibição
+    const nfFull  = m[2];
+    const cliente = m[3].trim().replace(/\s+/g,' ');
+    const sku     = m[4].trim();
+    const qtde    = m[5];
+    nfs.push({ pedido, nf, nfFull, cliente, sku, qtde });
+  }
+
+  // Fallback: coleta NFs de 6-9 dígitos (começando com 0003...) se tabela não parseou
+  if(!nfs.length){
+    const reNF = /\b(0{2,3}\d{6})\b/g;
+    let mn;
+    while((mn = reNF.exec(txt)) !== null){
+      nfs.push({ pedido:'—', nf: mn[1].replace(/^0+/,''), nfFull: mn[1], cliente:'—', sku:'—', qtde:'—' });
+    }
+    // Remove duplicatas
+    const seen = new Set();
+    nfs.splice(0, nfs.length, ...nfs.filter(n=>{ if(seen.has(n.nfFull)) return false; seen.add(n.nfFull); return true; }));
+  }
+
+  // Se uma NF apenas, preenche campo NF do cabeçalho
+  if(nfs.length === 1){
+    campos.nf      = nfs[0].nfFull;
+    campos.cliente = nfs[0].cliente !== '—' ? nfs[0].cliente : '';
+    campos.qtdVol  = nfs[0].qtde !== '—' ? nfs[0].qtde : '';
+  }
+
+  ocrDadosDetectados = { campos, nfs, nfSelecionada: null };
+  mostrarResultadoOCR();
+}
+
+// ── Exibir painel de resultado ──
+function mostrarResultadoOCR(){
+  const { campos, nfs } = ocrDadosDetectados;
+
+  // Campos do cabeçalho
+  const mapaCampos = [
+    { key:'motorista', label:'Transportadora', placeholder:'Nome da transportadora' },
+    { key:'veiculo',   label:'Placa',          placeholder:'Placa do veículo' },
+    { key:'nf',        label:'Nota Fiscal',    placeholder:'Nº da NF' },
+    { key:'cliente',   label:'Cliente',        placeholder:'Nome do cliente' },
+    { key:'qtdVol',    label:'Qtd. Volumes',   placeholder:'Quantidade' },
+    { key:'dataHora',  label:'Data/Hora doc.', placeholder:'Informativo' },
+  ];
+
+  document.getElementById('ocr-campos-header').innerHTML = mapaCampos
+    .filter(c => campos[c.key])
+    .map(c => `
+      <div class="ocr-campo">
+        <input type="checkbox" id="ochk-${c.key}" checked/>
+        <div class="ocr-campo-label">${c.label}</div>
+        <div class="ocr-campo-val" contenteditable="true" id="oval-${c.key}">${campos[c.key]}</div>
+      </div>`).join('');
+
+  // Se não achou nenhum campo
+  if(!mapaCampos.some(c => campos[c.key]) && !nfs.length){
+    document.getElementById('ocr-campos-header').innerHTML =
+      '<div style="color:#c0392b;font-size:13px;padding:8px 0;">⚠️ Nenhum dado identificado. Tente com uma foto mais nítida e bem iluminada.</div>';
+  }
+
+  // Tabela de NFs
+  if(nfs.length > 1){
+    document.getElementById('ocr-nfs-wrap').style.display = 'block';
+    document.getElementById('ocr-nfs-tbody').innerHTML = nfs.map((n,i)=>`
+      <tr id="onf-row-${i}" onclick="selecionarNF(${i})" style="cursor:pointer;">
+        <td><input type="radio" name="ocr-nf-sel" onchange="selecionarNF(${i})"/></td>
+        <td>${n.pedido}</td>
+        <td><strong>${n.nfFull}</strong></td>
+        <td>${n.cliente}</td>
+        <td style="font-size:11px;">${n.sku}</td>
+        <td>${n.qtde}</td>
+      </tr>`).join('');
+  } else {
+    document.getElementById('ocr-nfs-wrap').style.display = 'none';
+  }
+
+  document.getElementById('ocr-resultado').classList.add('show');
+}
+
+function selecionarNF(idx){
+  ocrDadosDetectados.nfSelecionada = idx;
+  document.querySelectorAll('#ocr-nfs-tbody tr').forEach((tr,i)=>{
+    tr.classList.toggle('sel-nf', i===idx);
+  });
+  const radios = document.querySelectorAll('#ocr-nfs-tbody input[type="radio"]');
+  if(radios[idx]) radios[idx].checked = true;
+}
+
+// ── Aplicar dados ao formulário ──
+function aplicarDadosOCR(){
+  const { campos, nfs, nfSelecionada } = ocrDadosDetectados;
+
+  // Campos do cabeçalho (somente se checkbox marcado)
+  const mapa = {
+    motorista: 'motorista',
+    veiculo:   'veiculo',
+    nf:        'nf',
+    cliente:   'cliente',
+    qtdVol:    'qtd-vol',
+  };
+
+  Object.entries(mapa).forEach(([key, fieldId]) => {
+    const chk = document.getElementById(`ochk-${key}`);
+    if(chk && chk.checked){
+      const val = document.getElementById(`oval-${key}`)?.innerText?.trim();
+      if(val) document.getElementById(fieldId).value = val;
+    }
+  });
+
+  // Se selecionou uma NF da tabela, sobrescreve NF/Cliente/Qtde com os dados da linha
+  if(nfSelecionada !== null && nfs[nfSelecionada]){
+    const sel = nfs[nfSelecionada];
+    if(sel.nfFull)  document.getElementById('nf').value      = sel.nfFull;
+    if(sel.cliente && sel.cliente !== '—') document.getElementById('cliente').value = sel.cliente;
+    if(sel.qtde    && sel.qtde    !== '—') document.getElementById('qtd-vol').value  = sel.qtde;
+  }
+
+  // Se só havia uma NF e não precisou selecionar
+  if(nfs.length === 1 && nfSelecionada === null){
+    const n = nfs[0];
+    if(n.nfFull)  document.getElementById('nf').value      = n.nfFull;
+    if(n.cliente && n.cliente !== '—') document.getElementById('cliente').value = n.cliente;
+    if(n.qtde    && n.qtde    !== '—') document.getElementById('qtd-vol').value  = n.qtde;
+  }
+
+  showToast('✅ Dados aplicados ao formulário! Revise e clique em Gravar.', 3500);
+
+  // Scroll suave até o topo do formulário
+  document.getElementById('conferente').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function limparOCR(){
+  document.getElementById('ocr-resultado').classList.remove('show');
+  document.getElementById('ocr-preview-wrap').style.display = 'none';
+  document.getElementById('ocr-img-preview').src = '';
+  document.getElementById('ocr-file-input').value = '';
+  ocrDadosDetectados = { campos:{}, nfs:[], nfSelecionada:null };
 }
 
 // ─── INIT ─────────────────────────────────────────────────────
